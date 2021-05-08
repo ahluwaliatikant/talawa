@@ -51,17 +51,46 @@ class _JoinOrganizationState extends State<JoinOrganization> {
   List joinedOrganizations = [];
   List joinedOrganizationsIds = [];
 
+  //variable to store whether floatingActionButton is visible or not
+  bool _isVisible = true;
+  //scroll controller for the list view
+  var _scrollController = ScrollController();
   @override
   void initState() {
     //creating the initial state for all the variables
     super.initState();
     fetchOrg();
+    hideFloatingActionButton();
   }
 
   @override
   void dispose() {
     disposed = true;
     super.dispose();
+  }
+
+  //Function for making the floating action button hide when someone scrolls to end of the list
+  void hideFloatingActionButton() {
+    _scrollController.addListener(() {
+      if (_scrollController.position.atEdge) // if the list is at one end
+      {
+        if (_scrollController.position.pixels > 0) // if the list is at the bottom end
+        {
+          if (_isVisible == true) {
+            setState(() {
+              _isVisible = false;
+            });
+          }
+        }
+      }
+      else{ // make the floating action button visible when user scrolls back up
+        if(_isVisible == false){
+          setState(() {
+            _isVisible = true;
+          });
+        }
+      }
+    });
   }
 
   // Function for getting the current user id.
@@ -308,6 +337,7 @@ class _JoinOrganizationState extends State<JoinOrganization> {
                           color: const Color(0xffF3F6FF),
                           child: searchController.text.isNotEmpty
                               ? ListView.builder(
+                                  controller: _scrollController,
                                   itemCount: filteredOrgInfo.length,
                                   itemBuilder: (context, index) {
                                     final organization = filteredOrgInfo[index];
@@ -438,6 +468,7 @@ class _JoinOrganizationState extends State<JoinOrganization> {
                                     );
                                   })
                               : ListView.builder(
+                                  controller: _scrollController,
                                   itemCount: organizationInfo.length,
                                   itemBuilder: (context, index) {
                                     final organization =
@@ -574,17 +605,20 @@ class _JoinOrganizationState extends State<JoinOrganization> {
                                   })))
                 ],
               )),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        backgroundColor: UIData.secondaryColor,
-        foregroundColor: Colors.white,
-        elevation: 5.0,
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => CreateOrganization(
-                    isFromProfile: widget.fromProfile,
-                  )));
-        },
+      floatingActionButton: Visibility(
+        visible: _isVisible,
+        child: FloatingActionButton(
+          child: const Icon(Icons.add),
+          backgroundColor: UIData.secondaryColor,
+          foregroundColor: Colors.white,
+          elevation: 5.0,
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => CreateOrganization(
+                      isFromProfile: widget.fromProfile,
+                    )));
+          },
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
