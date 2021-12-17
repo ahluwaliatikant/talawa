@@ -28,7 +28,195 @@ class Events extends StatefulWidget {
 class _EventsState extends State<Events> {
   final CalendarController _calendarController = CalendarController();
   CarouselController carouselController = CarouselController();
+<<<<<<< HEAD
   ScrollController listScrollController = ScrollController();
+=======
+  String notFetched = 'No Events Created';
+  bool fetched = true;
+  Future<void> events;
+  Timer timer = Timer();
+  String userId;
+
+  FToast fToast;
+
+  //variable for organization Id
+  // ignore: unused_field
+  String _currOrgId;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      events = getEvents();
+    });
+  }
+
+  //get all events for a given day
+  //account for recurring events
+  List filterEventsByDay(DateTime currentDate, List events) {
+    final List currentevents = [];
+
+    for (final event in events) {
+      final DateTime startTime = DateTime.fromMicrosecondsSinceEpoch(
+          int.parse(event['startTime'].toString()));
+      if (!(event['recurring'] as bool) &&
+          timer.isSameDay(currentDate, startTime)) {
+        currentevents.add(event);
+      }
+      if (event['recurrance'] == 'DAILY') {
+        currentevents.add(event);
+      } else if (event['recurrance'] == 'WEEKLY' &&
+          timer.isSameWeekDay(currentDate, startTime)) {
+        currentevents.add(event);
+      } else if (event['recurrance'] == 'MONTHLY' &&
+          currentDate.day == startTime.day) {
+        currentevents.add(event);
+      } else if (event['recurrance'] == 'YEARLY' &&
+          currentDate.month == startTime.month &&
+          currentDate.day == startTime.day) {
+        currentevents.add(event);
+      }
+    }
+    return currentevents;
+  }
+
+  //return events in calendar display format ''Map<DateTime, List<dynamic>>''
+  //account for recurring events
+  Map eventsToDates(List events, DateTime now) {
+    final Map<DateTime, List<dynamic>> eventDates = {};
+    addDateToMap(DateTime date, Map event) {
+      if (eventDates[date] == null) {
+        eventDates[date] = [event];
+      } else {
+        eventDates[date].add(event);
+      }
+    }
+
+    for (final event in events) {
+      if (!(event['recurring'] as bool)) {
+        addDateToMap(
+            DateTime.fromMicrosecondsSinceEpoch(
+                int.parse(event['startTime'].toString())),
+            event as Map);
+      } else {
+        if (event['recurrance'] == 'DAILY') {
+          int day = DateTime.fromMicrosecondsSinceEpoch(
+                  int.parse(event['startTime'].toString()))
+              .day;
+          final int lastday = DateTime.fromMicrosecondsSinceEpoch(
+                  int.parse(event['endTime'].toString()))
+              .day;
+          while (day <= lastday) {
+            addDateToMap(DateTime(now.year, now.month, day), event as Map);
+            day += 1;
+          }
+        }
+        if (event['recurrance'] == 'WEEKLY') {
+          int day = DateTime.fromMicrosecondsSinceEpoch(
+                  int.parse(event['startTime'].toString()))
+              .day;
+          final int lastday = DateTime.fromMicrosecondsSinceEpoch(
+                  int.parse(event['endTime'].toString()))
+              .day;
+          while (day <= lastday) {
+            addDateToMap(DateTime(now.year, now.month, day), event as Map);
+
+            day += 7;
+          }
+        }
+        if (event['recurrance'] == 'MONTHLY') {
+          final DateTime firstDate = DateTime.fromMicrosecondsSinceEpoch(
+              int.parse(event['startTime'].toString()));
+          addDateToMap(
+              DateTime(now.year, now.month, firstDate.day), event as Map);
+        }
+        if (event['recurrance'] == 'YEARLY') {
+          final DateTime firstDate = DateTime.fromMicrosecondsSinceEpoch(
+              int.parse(event['startTime'].toString()));
+          if (now.month == firstDate.month) {
+            addDateToMap(
+                DateTime(now.year, now.month, firstDate.day), event as Map);
+          }
+        }
+      }
+    }
+    return eventDates;
+  }
+
+  //function called to delete the event
+  Future<void> _deleteEvent(BuildContext context, String eventId) async {
+    showProgress(context, 'Deleting Event . . .', isDismissible: false);
+    final String mutation = Queries().deleteEvent(eventId);
+    final Map result = await apiFunctions.gqlquery(mutation);
+    if (result["exception"] != null) {
+      _exceptionToast("Could not delete event! Please try again later");
+    }
+    await getEvents();
+    hideProgress();
+  }
+
+  //function to called be called for register
+  Future<void> _register(BuildContext context, String eventId) async {
+    final Map result = await Queries().registerForEvent(eventId) as Map;
+    print(result);
+  }
+
+  //function to get the events
+  Future<void> getEvents() async {
+    final String currentOrgID = await preferences.getCurrentOrgId();
+    _currOrgId = currentOrgID;
+    final Map result =
+        await apiFunctions.gqlquery(Queries().fetchOrgEvents(currentOrgID));
+    eventList =
+        result == null ? [] : (result['events'] as List).reversed.toList();
+    eventList.removeWhere((element) =>
+        element['title'] == 'Talawa Congress' ||
+        element['title'] == 'test' ||
+        element['title'] == 'Talawa Conference Test' ||
+        element['title'] == 'mayhem' ||
+        element['title'] == 'mayhem1' ||
+        element['organization']['_id'] !=
+            currentOrgID); //dont know who keeps adding these
+    // This removes all invalid date formats other than Unix time
+    eventList.removeWhere(
+        (element) => int.tryParse(element['startTime'] as String) == null);
+    eventList.sort((a, b) {
+      return DateTime.fromMicrosecondsSinceEpoch(
+              int.parse(a['startTime'] as String))
+          .compareTo(DateTime.fromMicrosecondsSinceEpoch(
+              int.parse(b['startTime'] as String)));
+    });
+    eventsToDates(eventList, DateTime.now());
+    setState(() {
+      displayedEvents = eventList;
+    });
+    userId = await preferences.getUserId();
+  }
+
+  //functions to edit the event
+  Future<void> _editEvent(BuildContext context, Map event) async {
+    if (event['creator']['_id'] != userId) {
+      Fluttertoast.showToast(msg: "You cannot edit events you didn't create");
+    } else {
+      pushNewScreen(context,
+          withNavBar: true,
+          screen: EditEvent(
+            event: event,
+          ));
+    }
+  }
+
+  Future<void> addEventTask(BuildContext context, String eventId) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AddEventTask(
+          eventId: eventId,
+        );
+      },
+    );
+  }
+>>>>>>> ff1012f1a7079e4665dea0fa9b6fed78e64b8f41
 
   @override
   Widget build(BuildContext context) {

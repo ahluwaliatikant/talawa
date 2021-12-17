@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+<<<<<<< HEAD
 import 'package:talawa/services/app_localization.dart';
+=======
+>>>>>>> ff1012f1a7079e4665dea0fa9b6fed78e64b8f41
 
 class PaginationIcon extends StatelessWidget {
   const PaginationIcon({
@@ -16,6 +19,7 @@ class PaginationIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return _paginationWidget(context);
   }
 
@@ -23,6 +27,14 @@ class PaginationIcon extends StatelessWidget {
   Widget _paginationWidget(BuildContext context) {
     if (isNextPageExist) {
       //fetchMoreHelper();
+=======
+    return _paginationWidget();
+  }
+
+  /// WIDGET TO BE DISPLAYED BASED ON THE [PAGINATION] TENDENCY
+  Widget _paginationWidget() {
+    if (isNextPageExist) {
+>>>>>>> ff1012f1a7079e4665dea0fa9b6fed78e64b8f41
       if (result.loading) {
         return const Center(
           child: Padding(
@@ -35,7 +47,10 @@ class PaginationIcon extends StatelessWidget {
           ),
         );
       } else {
+<<<<<<< HEAD
         fetchMoreHelper();
+=======
+>>>>>>> ff1012f1a7079e4665dea0fa9b6fed78e64b8f41
         return Padding(
           padding: const EdgeInsets.all(10.0),
           child: Center(
@@ -43,6 +58,7 @@ class PaginationIcon extends StatelessWidget {
               onTap: () => fetchMoreHelper(),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+<<<<<<< HEAD
                 children: <Widget>[
                   const Icon(
                     Icons.add_circle_outline_outlined,
@@ -52,11 +68,26 @@ class PaginationIcon extends StatelessWidget {
                   Text(
                     AppLocalizations.of(context).translate('Load More'),
                     style: const TextStyle(
+=======
+                children: const <Widget>[
+                  Icon(
+                    Icons.add_circle_outline_outlined,
+                    size: 50,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Load More',
+                    style: TextStyle(
+>>>>>>> ff1012f1a7079e4665dea0fa9b6fed78e64b8f41
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
+<<<<<<< HEAD
                   const SizedBox(height: 25),
+=======
+                  SizedBox(height: 25),
+>>>>>>> ff1012f1a7079e4665dea0fa9b6fed78e64b8f41
                 ],
               ),
             ),

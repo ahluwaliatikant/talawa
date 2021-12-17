@@ -2,8 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+<<<<<<< HEAD
 import 'package:talawa/controllers/post_controller.dart';
 import 'package:talawa/services/app_localization.dart';
+=======
+import 'package:talawa/controllers/newsfeed_controller.dart';
+>>>>>>> ff1012f1a7079e4665dea0fa9b6fed78e64b8f41
 
 import 'package:talawa/services/preferences.dart';
 import 'package:talawa/utils/uidata.dart';

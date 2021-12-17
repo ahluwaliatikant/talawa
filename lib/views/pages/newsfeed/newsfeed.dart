@@ -5,10 +5,14 @@ import 'package:flutter/rendering.dart';
 //pages are imported here
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
+<<<<<<< HEAD
 import 'package:talawa/controllers/news_feed_controller.dart';
 import 'package:talawa/model/posts.dart';
 import 'package:talawa/services/app_localization.dart';
 import 'package:talawa/utils/custom_toast.dart';
+=======
+import 'package:talawa/controllers/newsfeed_controller.dart';
+>>>>>>> ff1012f1a7079e4665dea0fa9b6fed78e64b8f41
 import 'package:talawa/utils/ui_scaling.dart';
 import 'package:talawa/views/pages/newsfeed/add_post.dart';
 import 'package:talawa/views/pages/newsfeed/news_article.dart';

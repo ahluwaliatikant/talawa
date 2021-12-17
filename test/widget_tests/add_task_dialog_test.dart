@@ -4,10 +4,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 // Local files imports.
 import 'package:talawa/controllers/auth_controller.dart';
+import 'package:talawa/controllers/newsfeed_controller.dart';
 import 'package:talawa/controllers/org_controller.dart';
 import 'package:talawa/services/app_localization.dart';
 import 'package:talawa/services/comment.dart';
+<<<<<<< HEAD
 import 'package:talawa/controllers/news_feed_controller.dart';
+=======
+>>>>>>> ff1012f1a7079e4665dea0fa9b6fed78e64b8f41
 import 'package:talawa/services/preferences.dart';
 import 'package:talawa/utils/gql_client.dart';
 import 'package:talawa/utils/ui_scaling.dart';

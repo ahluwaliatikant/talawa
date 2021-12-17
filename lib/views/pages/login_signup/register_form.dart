@@ -4,8 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 // pages are called here
 import 'package:provider/provider.dart';
+<<<<<<< HEAD
 import 'package:talawa/controllers/signup_login_controller.dart';
 import 'package:talawa/services/app_localization.dart';
+=======
+import 'package:talawa/enums/image_from.dart';
+import 'package:talawa/services/queries_.dart';
+>>>>>>> ff1012f1a7079e4665dea0fa9b6fed78e64b8f41
 import 'package:talawa/utils/gql_client.dart';
 import 'package:talawa/utils/ui_scaling.dart';
 import 'package:talawa/utils/uidata.dart';
